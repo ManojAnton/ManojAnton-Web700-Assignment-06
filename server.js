@@ -8,73 +8,62 @@
 *  Online (Vercel) Link: https://manoj-anton-web700-assignment-05.vercel.app/
 *
 ********************************************************************************/ 
-
 const express = require("express");
 const path = require("path");
-const collegeData = require("./modules/collegeData.js");
+const collegeData = require("./modules/collegeData");
+const expressLayouts = require("express-ejs-layouts");
 
 const app = express();
 const HTTP_PORT = process.env.PORT || 8080;
 
-// Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views")); // ✅ Required for Vercel to find .ejs files
+app.set("views", path.join(__dirname, "views")); // <-- Important for Vercel
+app.use(expressLayouts);
+app.set("layout", "./layouts/main"); // Uses views/layouts/main.ejs
 
-// Middleware to track active routes
-app.use(function (req, res, next) {
-    let route = req.path.substring(1);
-    app.locals.activeRoute = "/" + (isNaN(route.split('/')[1]) ? route.replace(/\/(?!.*)/, "") : route.replace(/\/(.*)/, ""));
-    next();
-});
+// Routes
+app.get("/", (req, res) => res.render("home"));
+app.get("/about", (req, res) => res.render("about"));
+app.get("/htmlDemo", (req, res) => res.render("htmlDemo"));
+app.get("/students/add", (req, res) => res.render("addStudent"));
 
-// Render Pages
-app.get("/", (req, res) => res.render("main", { content: "home" }));
-app.get("/about", (req, res) => res.render("about", { content: "about.ejs" }));
-app.get("/htmlDemo", (req, res) => res.render("htmlDemo", { content: "htmlDemo.ejs" }));
-app.get("/students/add", (req, res) => res.render("addStudent", { content: "addStudent.ejs" }));
-
-// Students List
 app.get("/students", (req, res) => {
-    collegeData.getAllStudents()
-        .then(data => res.render("students", { students: data, content: "students.ejs" }))
-        .catch(() => res.render("students", { message: "No results", content: "students.ejs" }));
+  collegeData.getAllStudents()
+    .then(data => res.render("students", { students: data }))
+    .catch(() => res.render("students", { message: "No results" }));
 });
 
-// Courses List
 app.get("/courses", (req, res) => {
-    collegeData.getCourses()
-        .then(data => res.render("courses", { courses: data }))
-        .catch(() => res.render("courses", { message: "No courses found" }));
+  collegeData.getCourses()
+    .then(data => res.render("courses", { courses: data }))
+    .catch(() => res.render("courses", { message: "No courses found" }));
 });
 
-// Single Student Profile
 app.get("/student/:num", (req, res) => {
-    collegeData.getStudentByNum(req.params.num)
-        .then(data => res.render("student", { student: data, content: "student.ejs" }))
-        .catch(() => res.render("student", { message: "Student not found", content: "student.ejs" }));
+  collegeData.getStudentByNum(req.params.num)
+    .then(data => res.render("student", { student: data }))
+    .catch(() => res.render("student", { message: "Student not found" }));
 });
 
-// Update Student
 app.post("/student/update", (req, res) => {
-    collegeData.updateStudent(req.body)
-        .then(() => res.redirect("/students"))
-        .catch(err => res.status(500).send(err));
+  collegeData.updateStudent(req.body)
+    .then(() => res.redirect("/students"))
+    .catch(err => res.status(500).send(err));
 });
 
-// 404 Handler
 app.use((req, res) => {
-    res.status(404).send("Page Not Found");
+  res.status(404).send("Page Not Found");
 });
 
-// Export for Vercel or run locally
+// Export for Vercel
 if (process.env.VERCEL) {
-    module.exports = app;
+  module.exports = app;
 } else {
-    collegeData.initialize()
-        .then(() => {
-            app.listen(HTTP_PORT, () => console.log(`Server running at http://localhost:${HTTP_PORT}`));
-        })
-        .catch(err => console.log(`Failed to initialize: ${err}`));
+  collegeData.initialize().then(() => {
+    app.listen(HTTP_PORT, () =>
+      console.log(`Server running at http://localhost:${HTTP_PORT}`)
+    );
+  });
 }
