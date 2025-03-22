@@ -15,6 +15,10 @@ module.exports.initialize = function () {
         const coursesFilePath = path.join(__dirname, "data", "courses.json");
         const studentsFilePath = path.join(__dirname, "data", "students.json");
 
+        console.log("Initializing...");
+        console.log("Courses file path:", coursesFilePath);
+        console.log("Students file path:", studentsFilePath);
+
         fs.readFile(coursesFilePath, "utf8", (err, courseData) => {
             if (err) {
                 console.error(`Error reading courses file at ${coursesFilePath}: ${err.message}`);
@@ -29,6 +33,7 @@ module.exports.initialize = function () {
 
                 try {
                     dataCollection = new Data(JSON.parse(studentData), JSON.parse(courseData));
+                    console.log("Data initialized successfully");
                     resolve();
                 } catch (parseErr) {
                     console.error(`Error parsing JSON: ${parseErr.message}`);
@@ -96,7 +101,7 @@ module.exports.addStudent = function (studentData) {
         if (!dataCollection) {
             reject("Data not initialized");
         } else {
-            studentData.studentNum = String(studentData.studentNum); // Ensure studentNum is a string
+            studentData.studentNum = String(studentData.studentNum);
             dataCollection.students.push(studentData);
             resolve();
         }
