@@ -30,7 +30,7 @@ app.use(function (req, res, next) {
 });
 
 // Render Pages
-app.get("/", (req, res) => res.render("home", { content: "home.ejs" }));
+app.get("/", (req, res) => res.render("main", { content: "home" }));
 app.get("/about", (req, res) => res.render("about", { content: "about.ejs" }));
 app.get("/htmlDemo", (req, res) => res.render("htmlDemo", { content: "htmlDemo.ejs" }));
 app.get("/students/add", (req, res) => res.render("addStudent", { content: "addStudent.ejs" }));
