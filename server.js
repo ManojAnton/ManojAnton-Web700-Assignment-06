@@ -1,29 +1,22 @@
-/*********************************************************************************
-*  WEB700 – Assignment 05
-*  I declare that this assignment is my own work in accordance with Seneca Academic Policy.
-*  No part of this assignment has been copied manually or electronically from any other source.
-* 
-*  Name: Manoj Anton Manorathan Student ID: 146165238 Date: 22/03/2025
-*
-*  Online (Vercel) Link: https://manoj-anton-web700-assignment-05.vercel.app/
-*
-********************************************************************************/ 
 const express = require("express");
 const path = require("path");
-const collegeData = require("./modules/collegeData");
 const expressLayouts = require("express-ejs-layouts");
+const collegeData = require("./modules/collegeData");
 
 const app = express();
 const HTTP_PORT = process.env.PORT || 8080;
 
+// Middleware
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public"))); // ✅ critical for CSS & assets
 
-app.set("views", path.join(__dirname, "views"));
+// View engine
+app.set("views", path.join(__dirname, "views")); // ✅ for vercel compatibility
 app.set("view engine", "ejs");
 app.use(expressLayouts);
-app.set("layout", "./layouts/main"); // ✅ correct for views/layouts/main.ejs
+app.set("layout", "layouts/main"); // ✅ correct layout path
 
+// Routes
 app.get("/", (req, res) => res.render("home"));
 app.get("/about", (req, res) => res.render("about"));
 app.get("/htmlDemo", (req, res) => res.render("htmlDemo"));
@@ -53,10 +46,9 @@ app.post("/student/update", (req, res) => {
     .catch(err => res.status(500).send(err));
 });
 
-app.use((req, res) => {
-  res.status(404).send("Page Not Found");
-});
+app.use((req, res) => res.status(404).send("Page Not Found"));
 
+// Export to Vercel
 if (process.env.VERCEL) {
   module.exports = app;
 } else {
