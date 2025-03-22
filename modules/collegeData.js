@@ -12,10 +12,9 @@ let dataCollection = null;
 
 module.exports.initialize = function () {
     return new Promise((resolve, reject) => {
-        // Use process.cwd() for Vercel root, then adjust path
         const basePath = process.env.VERCEL ? process.cwd() : __dirname;
-        const coursesFilePath = path.join(basePath, "data", "courses.json");
-        const studentsFilePath = path.join(basePath, "data", "students.json");
+        const coursesFilePath = path.join(basePath, "../data", "courses.json"); // Adjusted path
+        const studentsFilePath = path.join(basePath, "../data", "students.json");
 
         console.log("Initializing...");
         console.log("Base path:", basePath);
