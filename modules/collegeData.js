@@ -102,19 +102,25 @@ module.exports.updateStudent = function (studentData) {
 module.exports.addStudent = function (studentData) {
     return new Promise((resolve, reject) => {
         if (!dataCollection) {
-            reject("Data not initialized");
-        } else {
-            studentData.studentNum = String(studentData.studentNum);
-            dataCollection.students.push(studentData);
-
-            const studentsFilePath = path.join(__dirname, "../data/students.json");
-            fs.writeFile(studentsFilePath, JSON.stringify(dataCollection.students, null, 2), 'utf8', (err) => {
-                if (err) {
-                    reject("Failed to save student to file");
-                } else {
-                    resolve();
-                }
-            });
+            return reject("Data not initialized");
         }
+
+        studentData.studentNum = String(studentData.studentNum);
+        dataCollection.students.push(studentData);
+
+        if (process.env.VERCEL) {
+            // On Vercel: skip writing to file
+            return resolve();
+        }
+
+        // On local: write to file
+        const studentsFilePath = path.join(__dirname, "../data/students.json");
+        fs.writeFile(studentsFilePath, JSON.stringify(dataCollection.students, null, 2), 'utf8', (err) => {
+            if (err) {
+                return reject("Failed to save student to file");
+            } else {
+                resolve();
+            }
+        });
     });
 };
