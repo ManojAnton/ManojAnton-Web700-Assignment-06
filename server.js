@@ -6,15 +6,14 @@ const expressLayouts = require("express-ejs-layouts");
 const app = express();
 const HTTP_PORT = process.env.PORT || 8080;
 
-// Middleware
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "public")));
+
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(expressLayouts);
-app.set("layout", "./layouts/main");
+app.set("layout", "layouts/main"); // Just "layouts/main" — no "./"
 
-// Routes
 app.get("/", (req, res) => res.render("home"));
 app.get("/about", (req, res) => res.render("about"));
 app.get("/htmlDemo", (req, res) => res.render("htmlDemo"));
@@ -48,19 +47,10 @@ app.use((req, res) => {
   res.status(404).send("Page Not Found");
 });
 
-// ✅ Critical: Initialize data before exporting
 if (process.env.VERCEL) {
-  // Export only after initializing
-  module.exports = (async () => {
-    await collegeData.initialize();
-    return app;
-  })();
+  module.exports = app;
 } else {
   collegeData.initialize().then(() => {
-    app.listen(HTTP_PORT, () =>
-      console.log(`Server running at http://localhost:${HTTP_PORT}`)
-    );
-  }).catch(err => {
-    console.log("Failed to start server:", err);
+    app.listen(HTTP_PORT, () => console.log(`Server running at http://localhost:${HTTP_PORT}`));
   });
 }
