@@ -44,7 +44,21 @@ app.post("/student/update", (req, res) => {
     .catch(err => res.status(500).send(err));
 });
 
-app.use((req, res) => res.status(404).send("Page Not Found"));
+app.get("/test", (req, res) => {
+    res.send("✅ Test route is working!");
+  });
+  
+// Handle 404 (Not Found)
+app.use((req, res) => {
+    res.status(404).send("Page Not Found");
+  });
+  
+  // Handle 500 (Server Errors)
+  app.use((err, req, res, next) => {
+    console.error("💥 Server Error:", err.stack);
+    res.status(500).send("Internal Server Error (from app.js)");
+  });
+  
 
 // ✅ Always initialize
 collegeData.initialize().then(() => {
