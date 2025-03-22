@@ -12,10 +12,13 @@ let dataCollection = null;
 
 module.exports.initialize = function () {
     return new Promise((resolve, reject) => {
-        const coursesFilePath = path.join(__dirname, "data", "courses.json");
-        const studentsFilePath = path.join(__dirname, "data", "students.json");
+        // Use process.cwd() for Vercel root, then adjust path
+        const basePath = process.env.VERCEL ? process.cwd() : __dirname;
+        const coursesFilePath = path.join(basePath, "data", "courses.json");
+        const studentsFilePath = path.join(basePath, "data", "students.json");
 
         console.log("Initializing...");
+        console.log("Base path:", basePath);
         console.log("Courses file path:", coursesFilePath);
         console.log("Students file path:", studentsFilePath);
 
@@ -25,11 +28,15 @@ module.exports.initialize = function () {
                 return reject("Unable to load courses");
             }
 
+            console.log("Courses file read successfully");
+
             fs.readFile(studentsFilePath, "utf8", (err, studentData) => {
                 if (err) {
                     console.error(`Error reading students file at ${studentsFilePath}: ${err.message}`);
                     return reject("Unable to load students");
                 }
+
+                console.log("Students file read successfully");
 
                 try {
                     dataCollection = new Data(JSON.parse(studentData), JSON.parse(courseData));
