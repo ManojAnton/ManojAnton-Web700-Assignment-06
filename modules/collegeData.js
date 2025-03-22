@@ -12,12 +12,10 @@ let dataCollection = null;
 
 module.exports.initialize = function () {
     return new Promise((resolve, reject) => {
-        // const basePath = process.env.VERCEL ? process.cwd() : __dirname;
-        const coursesFilePath = path.join(__dirname, "../data", "courses.json"); // Adjusted path
-        const studentsFilePath = path.join(__dirname, "../data", "students.json");
+        const coursesFilePath = path.join(__dirname, "../data/courses.json");
+        const studentsFilePath = path.join(__dirname, "../data/students.json");
 
         console.log("Initializing...");
-        console.log("Base path:", basePath);
         console.log("Courses file path:", coursesFilePath);
         console.log("Students file path:", studentsFilePath);
 
