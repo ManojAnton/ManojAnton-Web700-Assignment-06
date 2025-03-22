@@ -53,6 +53,12 @@ app.post("/student/update", (req, res) => {
     .catch(err => res.status(500).send(err));
 });
 
+//  Force theme.css to be included in build
+app.get("/css/theme.css", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "css", "theme.css"));
+  });
+  
+
 app.use((req, res) => {
   res.status(404).send("Page Not Found");
 });
