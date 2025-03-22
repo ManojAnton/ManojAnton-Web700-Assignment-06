@@ -17,13 +17,13 @@ const app = express();
 const HTTP_PORT = process.env.PORT || 8080;
 
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views")); // <-- Important for Vercel
-app.use(expressLayouts);
-app.set("layout", "./layouts/main"); // Uses views/layouts/main.ejs
+app.use(express.static(path.join(__dirname, "public")));
 
-// Routes
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
+app.use(expressLayouts);
+app.set("layout", "./layouts/main"); // ✅ correct for views/layouts/main.ejs
+
 app.get("/", (req, res) => res.render("home"));
 app.get("/about", (req, res) => res.render("about"));
 app.get("/htmlDemo", (req, res) => res.render("htmlDemo"));
@@ -53,17 +53,10 @@ app.post("/student/update", (req, res) => {
     .catch(err => res.status(500).send(err));
 });
 
-//  Force theme.css to be included in build
-app.get("/css/theme.css", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "css", "theme.css"));
-  });
-  
-
 app.use((req, res) => {
   res.status(404).send("Page Not Found");
 });
 
-// Export for Vercel
 if (process.env.VERCEL) {
   module.exports = app;
 } else {
