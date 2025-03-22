@@ -1,0 +1,36 @@
+<%
+    let tableHTML = "";
+    if (courses && courses.length > 0) {
+        tableHTML += `
+            <h2 class="text-center mb-4">Courses</h2>
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered text-center">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>Course ID</th>
+                            <th>Course Code</th>
+                            <th>Course Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+        courses.forEach(course => {
+            tableHTML += `
+                <tr>
+                    <td>${course.courseId}</td>
+                    <td>${course.courseCode}</td>
+                    <td>${course.courseDescription}</td>
+                </tr>
+            `;
+        });
+        tableHTML += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+    } else {
+        tableHTML = `<p class="text-center text-danger">No courses found.</p>`;
+    }
+%>
+
+<%- include('layouts/main', { content: tableHTML }) %>

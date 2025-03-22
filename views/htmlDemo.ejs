@@ -1,0 +1,49 @@
+<%- include('layouts/main', { content: `
+    <h1>HTML Elements Demo</h1>
+
+    <h2>Tables</h2>
+    <table class="table table-bordered">
+        <thead class="thead-light">
+            <tr>
+                <th>Student Name</th>
+                <th>Course</th>
+                <th>TA</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>John Doe</td><td>Web Development</td><td>Yes</td></tr>
+            <tr><td>Jane Smith</td><td>Database Systems</td><td>No</td></tr>
+        </tbody>
+    </table>
+
+    <h2>Lists</h2>
+    <ul>
+        <li>Programming Languages
+            <ol>
+                <li>JavaScript</li>
+                <li>Python</li>
+                <li>Java</li>
+            </ol>
+        </li>
+        <li>Web Frameworks
+            <ul>
+                <li>React</li>
+                <li>Angular</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2>Media</h2>
+    <h3>Image</h3>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/69/Snowboarder_in_halfpipe.jpg" alt="Snowboarder" width="300">
+
+    <h3>Audio</h3>
+    <audio controls>
+        <source src="https://pat-crawford-sdds.netlify.app/shared/fall-2021/web700/A3/sample-audio.mp3" type="audio/mpeg">
+    </audio>
+
+    <h3>Video</h3>
+    <video controls width="320">
+        <source src="https://pat-crawford-sdds.netlify.app/shared/fall-2021/web700/A3/sample-video.mp4" type="video/mp4">
+    </video>
+` }) %>
