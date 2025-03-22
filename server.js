@@ -1,8 +1,3 @@
-/*********************************************************************************
-*  WEB700 – Assignment 05
-*  Name: Manoj Anton Manorathan Student ID: 146165238 Date: 22/03/2025
-*  Online (Vercel) Link: https://manoj-anton-web700-assignment-05.vercel.app/
-********************************************************************************/
 const express = require("express");
 const path = require("path");
 const collegeData = require("./modules/collegeData");
@@ -11,9 +6,9 @@ const expressLayouts = require("express-ejs-layouts");
 const app = express();
 const HTTP_PORT = process.env.PORT || 8080;
 
-// Middleware
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public"))); // ✅ Ensures CSS is served
+app.use(express.static(path.join(__dirname, "public")));
+
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(expressLayouts);
@@ -53,7 +48,6 @@ app.use((req, res) => {
   res.status(404).send("Page Not Found");
 });
 
-// Run locally or export for Vercel
 if (process.env.VERCEL) {
   module.exports = app;
 } else {
