@@ -3,9 +3,9 @@
 *  I declare that this assignment is my own work in accordance with Seneca Academic Policy.
 *  No part of this assignment has been copied manually or electronically from any other source.
 * 
-*  Name: ______________________ Student ID: ______________ Date: ________________
+*  Name: Manoj Anton Manorathan Student ID: 146165238 Date: 22/03/2025
 *
-*  Online (Vercel) Link: ________________________________________________________
+*  Online (Vercel) Link: https://manoj-anton-web700-assignment-05.vercel.app/
 *
 ********************************************************************************/ 
 
@@ -20,6 +20,7 @@ const HTTP_PORT = process.env.PORT || 8080;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views")); // ✅ Required for Vercel to find .ejs files
 
 // Middleware to track active routes
 app.use(function (req, res, next) {
@@ -28,20 +29,20 @@ app.use(function (req, res, next) {
     next();
 });
 
-//  Render Pages
+// Render Pages
 app.get("/", (req, res) => res.render("home", { content: "home.ejs" }));
 app.get("/about", (req, res) => res.render("about", { content: "about.ejs" }));
 app.get("/htmlDemo", (req, res) => res.render("htmlDemo", { content: "htmlDemo.ejs" }));
 app.get("/students/add", (req, res) => res.render("addStudent", { content: "addStudent.ejs" }));
 
-//  Students List
+// Students List
 app.get("/students", (req, res) => {
     collegeData.getAllStudents()
         .then(data => res.render("students", { students: data, content: "students.ejs" }))
         .catch(() => res.render("students", { message: "No results", content: "students.ejs" }));
 });
 
-//  Courses List
+// Courses List
 app.get("/courses", (req, res) => {
     collegeData.getCourses()
         .then(data => res.render("courses", { courses: data }))
@@ -55,24 +56,22 @@ app.get("/student/:num", (req, res) => {
         .catch(() => res.render("student", { message: "Student not found", content: "student.ejs" }));
 });
 
-//  Update Student
+// Update Student
 app.post("/student/update", (req, res) => {
     collegeData.updateStudent(req.body)
         .then(() => res.redirect("/students"))
         .catch(err => res.status(500).send(err));
 });
 
-//  404 Handler
+// 404 Handler
 app.use((req, res) => {
     res.status(404).send("Page Not Found");
 });
 
 // Export for Vercel or run locally
 if (process.env.VERCEL) {
-    // On Vercel (serverless)
     module.exports = app;
 } else {
-    // Local dev
     collegeData.initialize()
         .then(() => {
             app.listen(HTTP_PORT, () => console.log(`Server running at http://localhost:${HTTP_PORT}`));
