@@ -1,18 +1,23 @@
+/*********************************************************************************
+*  WEB700 – Assignment 05
+*  Name: Manoj Anton Manorathan Student ID: 146165238 Date: 22/03/2025
+*  Online (Vercel) Link: https://manoj-anton-web700-assignment-05.vercel.app/
+********************************************************************************/
 const express = require("express");
 const path = require("path");
-const expressLayouts = require("express-ejs-layouts");
 const collegeData = require("./modules/collegeData");
+const expressLayouts = require("express-ejs-layouts");
 
 const app = express();
 const HTTP_PORT = process.env.PORT || 8080;
 
+// Middleware
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
-
+app.use(express.static(path.join(__dirname, "public"))); // ✅ Ensures CSS is served
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(expressLayouts);
-app.set("layout", "layouts/main");
+app.set("layout", "./layouts/main");
 
 // Routes
 app.get("/", (req, res) => res.render("home"));
@@ -44,31 +49,17 @@ app.post("/student/update", (req, res) => {
     .catch(err => res.status(500).send(err));
 });
 
-app.get("/test", (req, res) => {
-    res.send("✅ Test route is working!");
-  });
-  
-// Handle 404 (Not Found)
 app.use((req, res) => {
-    res.status(404).send("Page Not Found");
-  });
-  
-  // Handle 500 (Server Errors)
-  app.use((err, req, res, next) => {
-    console.error("💥 Server Error:", err.stack);
-    res.status(500).send("Internal Server Error (from app.js)");
-  });
-  
+  res.status(404).send("Page Not Found");
+});
 
-// ✅ Always initialize
-collegeData.initialize().then(() => {
-  if (process.env.VERCEL) {
-    module.exports = app;
-  } else {
+// Run locally or export for Vercel
+if (process.env.VERCEL) {
+  module.exports = app;
+} else {
+  collegeData.initialize().then(() => {
     app.listen(HTTP_PORT, () =>
       console.log(`Server running at http://localhost:${HTTP_PORT}`)
     );
-  }
-}).catch(err => {
-  console.error("Failed to initialize data:", err);
-});
+  });
+}

@@ -24,7 +24,6 @@ module.exports.initialize = function () {
     });
 };
 
-// Get all students
 module.exports.getAllStudents = function () {
     return new Promise((resolve, reject) => {
         if (dataCollection.students.length === 0) reject("No students found");
@@ -32,26 +31,20 @@ module.exports.getAllStudents = function () {
     });
 };
 
-// Get all courses
 module.exports.getCourses = function () {
     return new Promise((resolve, reject) => {
         if (dataCollection.courses.length === 0) {
             reject("no results returned");
         } else {
-            resolve(dataCollection.courses.map(course => {
-                return {
-                    courseId: course.courseId,
-                    courseCode: course.courseCode,
-                    courseDescription: course.courseDescription
-                };
-            }));
+            resolve(dataCollection.courses.map(course => ({
+                courseId: course.courseId,
+                courseCode: course.courseCode,
+                courseDescription: course.courseDescription
+            })));
         }
     });
 };
 
-
-
-// Get a student by number
 module.exports.getStudentByNum = function (num) {
     return new Promise((resolve, reject) => {
         const foundStudent = dataCollection.students.find(student => student.studentNum == num);
@@ -60,7 +53,6 @@ module.exports.getStudentByNum = function (num) {
     });
 };
 
-// Update student details
 module.exports.updateStudent = function (studentData) {
     return new Promise((resolve, reject) => {
         let foundIndex = dataCollection.students.findIndex(student => student.studentNum == studentData.studentNum);
