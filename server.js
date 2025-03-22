@@ -6,15 +6,13 @@ const collegeData = require("./modules/collegeData");
 const app = express();
 const HTTP_PORT = process.env.PORT || 8080;
 
-// Middleware
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public"))); // ✅ critical for CSS & assets
+app.use(express.static(path.join(__dirname, "public")));
 
-// View engine
-app.set("views", path.join(__dirname, "views")); // ✅ for vercel compatibility
+app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 app.use(expressLayouts);
-app.set("layout", "layouts/main"); // ✅ correct layout path
+app.set("layout", "layouts/main");
 
 // Routes
 app.get("/", (req, res) => res.render("home"));
@@ -48,13 +46,15 @@ app.post("/student/update", (req, res) => {
 
 app.use((req, res) => res.status(404).send("Page Not Found"));
 
-// Export to Vercel
-if (process.env.VERCEL) {
-  module.exports = app;
-} else {
-  collegeData.initialize().then(() => {
+// ✅ Always initialize
+collegeData.initialize().then(() => {
+  if (process.env.VERCEL) {
+    module.exports = app;
+  } else {
     app.listen(HTTP_PORT, () =>
       console.log(`Server running at http://localhost:${HTTP_PORT}`)
     );
-  });
-}
+  }
+}).catch(err => {
+  console.error("Failed to initialize data:", err);
+});
