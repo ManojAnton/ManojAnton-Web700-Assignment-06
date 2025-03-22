@@ -73,6 +73,13 @@ app.use((req, res) => {
 });
 
 // ✅ Start the server
-collegeData.initialize().then(() => {
-    app.listen(HTTP_PORT, () => console.log(`Server running at http://localhost:${HTTP_PORT}`));
-}).catch(err => console.log(`Failed to initialize: ${err}`));
+if (process.env.VERCEL) {
+    module.exports = app;
+  } else {
+    collegeData.initialize().then(() => {
+      app.listen(HTTP_PORT, () =>
+        console.log(`Server running at http://localhost:${HTTP_PORT}`)
+      );
+    }).catch(err => console.log(`Failed to initialize: ${err}`));
+  }
+  
