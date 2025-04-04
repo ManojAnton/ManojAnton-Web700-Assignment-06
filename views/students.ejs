@@ -2,6 +2,9 @@
     <div class="row">
         <div class="col-md-12">
             <h2 class="text-center mb-4">Students</h2>
+            <div class="text-right mb-3">
+                <a class="btn btn-primary" href="/students/add">+ Add Student</a>
+            </div>
             <% if (typeof students !== 'undefined' && students.length > 0) { %>
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered text-center" aria-label="Student List">
@@ -11,6 +14,7 @@
                                 <th scope="col">Full Name</th>
                                 <th scope="col">Email</th>
                                 <th scope="col">Course</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -20,6 +24,9 @@
                                     <td><a href="/student/<%= student.studentNum %>"><%= student.firstName %> <%= student.lastName %></a></td>
                                     <td><a href="mailto:<%= student.email %>"><%= student.email %></a></td>
                                     <td><a href="/students?course=<%= student.course %>"><%= student.course %></a></td>
+                                    <td>
+                                        <a class="btn btn-danger btn-sm" href="/student/delete/<%= student.studentNum %>" onclick="return confirm('Are you sure you want to delete this student?')">Delete</a>
+                                    </td>
                                 </tr>
                             <% }) %>
                         </tbody>

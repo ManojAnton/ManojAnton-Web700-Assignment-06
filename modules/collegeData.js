@@ -1,126 +1,92 @@
-const fs = require("fs");
-const path = require("path");
+const { Sequelize, DataTypes } = require("sequelize");
 
-class Data {
-    constructor(students, courses) {
-        this.students = students;
-        this.courses = courses;
+const sequelize = new Sequelize("neondb", "neondb_owner", "npg_BwTDsi17GMxHep-wandering-wave-a4mq7bmx", {
+  host: "pooler.us-east-1.aws.neon.tech",
+  dialect: "postgres",
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false
     }
-}
+  }
+});
 
-let dataCollection = null;
+const Student = sequelize.define("Student", {
+  studentNum: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  firstName: DataTypes.STRING,
+  lastName: DataTypes.STRING,
+  email: DataTypes.STRING,
+  addressStreet: DataTypes.STRING,
+  addressCity: DataTypes.STRING,
+  addressProvince: DataTypes.STRING,
+  TA: DataTypes.BOOLEAN,
+  status: DataTypes.STRING
+});
+
+const Course = sequelize.define("Course", {
+  courseId: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
+  },
+  courseCode: DataTypes.STRING,
+  courseDescription: DataTypes.STRING
+});
+
+Course.hasMany(Student, { foreignKey: "course" });
 
 module.exports.initialize = function () {
-    return new Promise((resolve, reject) => {
-        const coursesFilePath = path.join(__dirname, "../data/courses.json");
-        const studentsFilePath = path.join(__dirname, "../data/students.json");
-
-        console.log("Initializing...");
-        console.log("Courses file path:", coursesFilePath);
-        console.log("Students file path:", studentsFilePath);
-
-        fs.readFile(coursesFilePath, "utf8", (err, courseData) => {
-            if (err) {
-                console.error(`Error reading courses file at ${coursesFilePath}: ${err.message}`);
-                return reject("Unable to load courses");
-            }
-
-            console.log("Courses file read successfully");
-
-            fs.readFile(studentsFilePath, "utf8", (err, studentData) => {
-                if (err) {
-                    console.error(`Error reading students file at ${studentsFilePath}: ${err.message}`);
-                    return reject("Unable to load students");
-                }
-
-                console.log("Students file read successfully");
-
-                try {
-                    dataCollection = new Data(JSON.parse(studentData), JSON.parse(courseData));
-                    console.log("Data initialized successfully");
-                    resolve();
-                } catch (parseErr) {
-                    console.error(`Error parsing JSON: ${parseErr.message}`);
-                    reject("Invalid JSON format in data files");
-                }
-            });
-        });
-    });
+  return sequelize.sync();
 };
 
 module.exports.getAllStudents = function () {
-    return new Promise((resolve, reject) => {
-        if (!dataCollection || dataCollection.students.length === 0) {
-            reject("No students found");
-        } else {
-            resolve(dataCollection.students);
-        }
-    });
+  return Student.findAll();
 };
 
-module.exports.getCourses = function () {
-    return new Promise((resolve, reject) => {
-        if (!dataCollection || dataCollection.courses.length === 0) {
-            reject("No courses found");
-        } else {
-            resolve(dataCollection.courses.map(course => ({
-                courseId: course.courseId,
-                courseCode: course.courseCode,
-                courseDescription: course.courseDescription
-            })));
-        }
-    });
+module.exports.getStudentsByCourse = function (course) {
+  return Student.findAll({ where: { course } });
 };
 
 module.exports.getStudentByNum = function (num) {
-    return new Promise((resolve, reject) => {
-        if (!dataCollection) {
-            reject("Data not initialized");
-        } else {
-            const foundStudent = dataCollection.students.find(student => student.studentNum == num);
-            if (!foundStudent) reject("Student not found");
-            else resolve(foundStudent);
-        }
-    });
+  return Student.findByPk(num);
+};
+
+module.exports.addStudent = function (studentData) {
+  return Student.create(studentData);
 };
 
 module.exports.updateStudent = function (studentData) {
-    return new Promise((resolve, reject) => {
-        if (!dataCollection) {
-            reject("Data not initialized");
-        } else {
-            let foundIndex = dataCollection.students.findIndex(student => student.studentNum == studentData.studentNum);
-            if (foundIndex !== -1) {
-                dataCollection.students[foundIndex] = studentData;
-                resolve();
-            } else {
-                reject("Student not found");
-            }
-        }
-    });
+  return Student.update(studentData, {
+    where: { studentNum: studentData.studentNum }
+  });
 };
-module.exports.addStudent = function (studentData) {
-    return new Promise((resolve, reject) => {
-        if (!dataCollection) {
-            return reject("Data not initialized");
-        }
 
-        studentData.studentNum = String(studentData.studentNum);
-        dataCollection.students.push(studentData);
+module.exports.getCourses = function () {
+  return Course.findAll();
+};
 
-        if (process.env.VERCEL) {
-            // On Vercel: skip writing to file
-            return resolve();
-        }
+module.exports.getCourseById = function (id) {
+  return Course.findByPk(id);
+};
 
-        // On local: write to file
-        const studentsFilePath = path.join(__dirname, "../data/students.json");
-        fs.writeFile(studentsFilePath, JSON.stringify(dataCollection.students, null, 2), 'utf8', (err) => {
-            if (err) {
-                return reject("Failed to save student to file");
-            } else {
-                resolve();
-            }
-        });
-    });
+module.exports.addCourse = function (courseData) {
+  return Course.create(courseData);
+};
+
+module.exports.updateCourse = function (courseData) {
+  return Course.update(courseData, {
+    where: { courseId: courseData.courseId }
+  });
+};
+
+module.exports.deleteCourseById = function (id) {
+  return Course.destroy({ where: { courseId: id } });
+};
+
+module.exports.deleteStudentByNum = function (num) {
+  return Student.destroy({ where: { studentNum: num } });
 };

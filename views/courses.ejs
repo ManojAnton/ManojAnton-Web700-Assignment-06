@@ -2,6 +2,9 @@
     <div class="row">
         <div class="col-md-12">
             <h2 class="text-center mb-4">Courses</h2>
+            <div class="text-right mb-3">
+                <a class="btn btn-primary" href="/courses/add">+ Add Course</a>
+            </div>
             <% if (typeof courses !== 'undefined' && courses.length > 0) { %>
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered text-center" aria-label="Course List">
@@ -10,6 +13,7 @@
                                 <th scope="col">Course ID</th>
                                 <th scope="col">Course Code</th>
                                 <th scope="col">Course Description</th>
+                                <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -18,6 +22,15 @@
                                     <td><%= course.courseId %></td>
                                     <td><%= course.courseCode %></td>
                                     <td><%= course.courseDescription %></td>
+                                    <td>
+                                        <form method="POST" action="/course/update" class="d-inline">
+                                            <input type="hidden" name="courseId" value="<%= course.courseId %>">
+                                            <input type="hidden" name="courseCode" value="<%= course.courseCode %>">
+                                            <input type="hidden" name="courseDescription" value="<%= course.courseDescription %>">
+                                            <button type="submit" class="btn btn-sm btn-success">Update</button>
+                                        </form>
+                                        <a class="btn btn-sm btn-danger" href="/course/delete/<%= course.courseId %>" onclick="return confirm('Are you sure you want to delete this course?')">Delete</a>
+                                    </td>
                                 </tr>
                             <% }) %>
                         </tbody>
