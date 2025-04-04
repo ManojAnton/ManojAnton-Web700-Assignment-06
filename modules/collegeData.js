@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require("sequelize");
 
-const sequelize = new Sequelize("neondb", "neondb_owner", "npg_BwTDsi17GMxHep-wandering-wave-a4mq7bmx", {
-  host: "pooler.us-east-1.aws.neon.tech",
+const sequelize = new Sequelize("neondb", "neondb_owner", "npg_BwTDsi17GMxH", {
+  host: "ep-wandering-wave-a4mq7bmx-pooler.us-east-1.aws.neon.tech",
   dialect: "postgres",
   dialectOptions: {
     ssl: {
@@ -10,6 +10,7 @@ const sequelize = new Sequelize("neondb", "neondb_owner", "npg_BwTDsi17GMxHep-wa
     }
   }
 });
+
 
 const Student = sequelize.define("Student", {
   studentNum: {
