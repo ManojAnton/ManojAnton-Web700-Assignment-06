@@ -40,9 +40,16 @@ Course.hasMany(Student, { foreignKey: "course" });
 
 module.exports.initialize = function () {
   return new Promise((resolve, reject) => {
-    sequelize.sync()
+    sequelize.authenticate()
+      .then(() => {
+        console.log("Database connection successful");
+        return sequelize.sync();
+      })
       .then(() => resolve())
-      .catch(() => reject("unable to sync the database"));
+      .catch(err => {
+        console.error("Database connection failed:", err);
+        reject("unable to sync the database");
+      });
   });
 };
 
